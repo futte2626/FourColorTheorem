@@ -6,10 +6,16 @@ import java.util.ArrayList;
 public final class Graph {
     ArrayList<Vertex> vertices;
     ArrayList<Edge> edges;
+    ArrayList<Color> colors;
 
     public Graph() {
         vertices = new ArrayList<>(0);
         edges = new ArrayList<>(0);
+        colors = new ArrayList<>(4);
+        colors.add(Color.BLUE);
+        colors.add(Color.RED);
+        colors.add(Color.GREEN);
+        colors.add(Color.YELLOW);
     }
 
     public void addVertex(Vertex v) {
@@ -73,6 +79,9 @@ public final class Graph {
             if(e.a.equals(v)) {
                 neighbors.add(e.b);
             }
+            else if(e.b.equals(v)) {
+                neighbors.add(e.a);
+            }
         }
 
         return neighbors;
@@ -89,7 +98,41 @@ public final class Graph {
         return neighbors;
     }
 
-    public void ColorGraph(int maxColor) {
+    public void ColorGraph() {
+        for (Vertex v : vertices) {
+            // fresh copy of all colors for this vertex
+            ArrayList<Color> availableColors = new ArrayList<>(colors);
+
+            // remove colors already used by neighbors
+            for (Vertex neighbor : getNeighbors(v)) {
+                if (neighbor.c != null) {
+                    availableColors.remove(neighbor.c);
+                }
+            }
+
+            // assign the first available color
+            if (!availableColors.isEmpty()) {
+                v.c = availableColors.get(0);
+            } else {
+                v.c = Color.BLACK; // fallback if no color is available
+            }
+        }
+    }
+
+    /*public void ColorGraph() {
+        ArrayList<Color> possibleColors = colors;
+        for (int i = 0; i < this.vertices.size(); i++) {
+            for(Vertex v : getNeighbors(vertices.get(i))) {
+                if(v.c != null) possibleColors.remove(v.c);
+            }
+            if(!possibleColors.isEmpty()) {vertices.get(i).c = possibleColors.get(0);}
+            else vertices.get(i).c = Color.BLACK;
+
+            possibleColors = colors;
+        }
+    } */
+
+    /* public void ColorGraph(int maxColor) {
         int highestDegree = 0;
         int higestDegreePos = 0;
         for (int i = 0; i < this.vertices.size(); i++) {
@@ -99,5 +142,5 @@ public final class Graph {
             }
         }
         this.vertices.get(higestDegreePos).c = Color.BLUE;
-    }
+    } */
 }
