@@ -16,6 +16,21 @@ public final class Graph {
         vertices.add(v);
     }
 
+    public void addVertex(String name, int x, int y, Color color) {
+        vertices.add(new Vertex(name, x, y, color));
+    }
+
+    public void removeVertex(Vertex v) {
+        ArrayList<Edge> toRemove = new ArrayList<>();
+        for (Edge e : edges) {
+            if (e.a.equals(v) || e.b.equals(v)) {
+                toRemove.add(e);
+            }
+        }
+        edges.removeAll(toRemove);
+        vertices.remove(v);
+    }
+
     public void addEdge(Edge e) {
         edges.add(e);
     }
@@ -74,7 +89,7 @@ public final class Graph {
         return neighbors;
     }
 
-    public Graph ColorGraph(int maxColor) {
+    public void ColorGraph(int maxColor) {
         int highestDegree = 0;
         int higestDegreePos = 0;
         for (int i = 0; i < this.vertices.size(); i++) {
@@ -84,28 +99,5 @@ public final class Graph {
             }
         }
         this.vertices.get(higestDegreePos).c = Color.BLUE;
-
-        return this;
-    }
-}
-
-class VertexTest {
-    String name;
-    int x, y;
-    Color c;
-
-    public VertexTest(String name, int x, int y, Color c) {
-        this.name = name;
-        this.x = x;
-        this.y = y;
-        this.c = c;
-    }
-}
-
-class EdgeTest {
-    VertexTest v1, v2;
-    public EdgeTest(VertexTest v1, VertexTest v2) {
-        this.v1 = v1;
-        this.v2 = v2;
     }
 }
