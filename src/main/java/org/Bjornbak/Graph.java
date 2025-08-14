@@ -99,6 +99,7 @@ public final class Graph {
     }
 
     public void ColorGraph() {
+        double startTime = System.nanoTime();
         for (Vertex v : vertices) {
             // fresh copy of all colors for this vertex
             ArrayList<Color> availableColors = new ArrayList<>(colors);
@@ -117,6 +118,7 @@ public final class Graph {
                 v.c = Color.BLACK; // fallback if no color is available
             }
         }
+        System.out.println("Time to color graph: " + ((System.nanoTime() - startTime) / 1000000) + " ms");
     }
 
     /*public void ColorGraph() {

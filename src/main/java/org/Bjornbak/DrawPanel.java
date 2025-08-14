@@ -47,7 +47,7 @@ public class DrawPanel extends JPanel implements MouseListener, ItemListener, Ch
         graph.addEdge(v5, v7);
         graph.addEdge(v6, v7);
         graph.printVertices(graph.getNeighbors(v1));
-        JButton colorButton = new JButton("Color graph");
+        JButton colorButton = new JButton("Farv graf");
         colorButton.setSize(400,400);
         colorButton.setVisible(true);
         this.add(colorButton);
