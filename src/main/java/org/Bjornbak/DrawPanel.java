@@ -21,18 +21,18 @@ public class DrawPanel extends JPanel implements MouseListener, ItemListener, Ch
         addMouseListener(this);
 
 
-        Vertex r = new Vertex("r", 60, 60, null);
-        Vertex g = new Vertex("g", 140, 60, null);
-        Vertex b = new Vertex("b", 100, 120, null);
+        Vertex r = new Vertex("r", 80, 180, null);
+        Vertex g = new Vertex("g", 320, 180, null);
+        Vertex b = new Vertex("b", 200, 360, null);
 
 // the four neighbors of u (will end up R,G,B,Y)
-        Vertex n1 = new Vertex("n1", 260, 40, null);
-        Vertex n2 = new Vertex("n2", 320, 100, null);
-        Vertex n3 = new Vertex("n3", 260, 160, null);
-        Vertex n4 = new Vertex("n4", 200, 100, null);
+        Vertex n1 = new Vertex("n1", 680, 120, null);
+        Vertex n2 = new Vertex("n2", 860, 300, null);
+        Vertex n3 = new Vertex("n3", 680, 480, null);
+        Vertex n4 = new Vertex("n4", 500, 300, null);
 
 // center (must be last to force failure)
-        Vertex u  = new Vertex("u", 280, 100, null);
+        Vertex u  = new Vertex("u", 740, 300, null);
 
 // add in THIS order to preserve iteration order of ColorGraph()
         graph.addVertex(r);
@@ -97,9 +97,23 @@ public class DrawPanel extends JPanel implements MouseListener, ItemListener, Ch
         //Draw edges
         for(int i = 0; i < graph.edges.size(); i++) {
             g2d.setColor(Color.black);
-            Point2D p1 = new Point2D.Float(graph.edges.get(i).a.x, graph.edges.get(i).a.y);
-            Point2D p2 = new Point2D.Float(graph.edges.get(i).b.x, graph.edges.get(i).b.y);
-            g2d.drawLine((int)p1.getX(),(int)p1.getY(),(int)p2.getX(),(int)p2.getY());
+            Edge currentEdge = graph.edges.get(i);
+
+            //currentEdge.CalculateIntermediatePoints();
+            Point2D p1 = new Point2D.Float(currentEdge.v1.x, currentEdge.v1.y);
+            Point2D p2 = new Point2D.Float(currentEdge.v2.x, currentEdge.v2.y);
+            Point2D intermediatePoint1 = new Point2D.Double(currentEdge.intermediatePoints[0].getX(),currentEdge.intermediatePoints[0].getY());
+            Point2D intermediatePoint2 = new Point2D.Double(currentEdge.intermediatePoints[1].getX(),currentEdge.intermediatePoints[1].getY());
+            Point2D[] edgePoint = {p1,intermediatePoint1,intermediatePoint2, p2};
+            Point2D prevPoint = p1;
+            BezierCurve curve = new BezierCurve(edgePoint);
+            for(double t = 0; t<=1; t+=0.01) {
+                Point2D currentPoint = curve.deCasteljau(edgePoint,t);
+                g2d.drawLine((int)currentPoint.getX(),(int)currentPoint.getY(),(int)prevPoint.getX(),(int)prevPoint.getY());
+                prevPoint = currentPoint;
+            }
+            g2d.fillOval((int)intermediatePoint1.getX()-4,(int)intermediatePoint1.getY()-4,8,8);
+            g2d.fillOval((int)intermediatePoint2.getX()-4,(int)intermediatePoint2.getY()-4,8,8);
         }
 
         //Draw verticies
@@ -153,6 +167,17 @@ public class DrawPanel extends JPanel implements MouseListener, ItemListener, Ch
                 double distance = Math.sqrt(Math.pow(graph.vertices.get(i).x-e.getX(),2) + Math.pow(graph.vertices.get(i).y-e.getY(),2));
                 if(distance <= 15) MovingVertex(graph.vertices.get(i));
             }
+            for(int i = 0; i < graph.edges.size(); i++) {
+                double distanceToIntermediatePoint1 = Math.sqrt(Math.pow(graph.edges.get(i).intermediatePoints[0].getX()-e.getX(),2) + Math.pow(graph.edges.get(i).intermediatePoints[0].getY()-e.getY(),2));
+                double distanceToIntermediatePoint2 = Math.sqrt(Math.pow(graph.edges.get(i).intermediatePoints[1].getX()-e.getX(),2) + Math.pow(graph.edges.get(i).intermediatePoints[1].getY()-e.getY(),2));
+                if(distanceToIntermediatePoint1 <= 15) {
+                    MovingIntermediatePoint(graph.edges.get(i).intermediatePoints[0]);
+                }
+                else if(distanceToIntermediatePoint2 <= 15) {
+                    MovingIntermediatePoint(graph.edges.get(i).intermediatePoints[1]);
+                }
+            }
+
 
         }
         if (e.getButton() == MouseEvent.BUTTON3) {
@@ -237,6 +262,26 @@ public class DrawPanel extends JPanel implements MouseListener, ItemListener, Ch
                         try {
                               mosPosX = getMousePosition().x;
                               mosPosY = getMousePosition().y;
+                        }catch (Exception ignored) {
+
+                        }
+
+                        repaint();
+                    } while (mouseDown);
+                    isRunning = false;
+                }
+            }.start();
+        }
+    }
+
+    private void MovingIntermediatePoint(Point2D p) {
+        if (checkAndMark()) {
+            new Thread() {
+                public void run() {
+                    do {
+                        try {
+                            p.setLocation(getMousePosition().x, getMousePosition().y);
+
                         }catch (Exception ignored) {
 
                         }

@@ -29,7 +29,7 @@ public final class Graph {
     public void removeVertex(Vertex v) {
         ArrayList<Edge> toRemove = new ArrayList<>();
         for (Edge e : edges) {
-            if (e.a.equals(v) || e.b.equals(v)) {
+            if (e.v1.equals(v) || e.v2.equals(v)) {
                 toRemove.add(e);
             }
         }
@@ -49,8 +49,8 @@ public final class Graph {
         for (Vertex v : vertices) {
             System.out.println("Vertex: " + v.name);
             for (Edge e : edges) {
-                if(e.a.equals(v) || e.b.equals(v)) {
-                    System.out.println("Edge: " + e.a.name + " --> " + e.b.name);
+                if(e.v1.equals(v) || e.v2.equals(v)) {
+                    System.out.println("Edge: " + e.v1.name + " --> " + e.v2.name);
                 }
             }
         }
@@ -66,7 +66,7 @@ public final class Graph {
     public int getVertexDegree(Vertex v) {
         int degree = 0;
         for (Edge e : edges) {
-            if(e.a.equals(v)) {
+            if(e.v1.equals(v)) {
                 degree++;
             }
         }
@@ -76,11 +76,11 @@ public final class Graph {
     public ArrayList<Vertex> getNeighbors(Vertex v) {
         ArrayList<Vertex> neighbors = new ArrayList<>();
         for (Edge e : edges) {
-            if(e.a.equals(v)) {
-                neighbors.add(e.b);
+            if(e.v1.equals(v)) {
+                neighbors.add(e.v2);
             }
-            else if(e.b.equals(v)) {
-                neighbors.add(e.a);
+            else if(e.v2.equals(v)) {
+                neighbors.add(e.v1);
             }
         }
 
@@ -90,8 +90,8 @@ public final class Graph {
     public ArrayList<String> getNeighborName(Vertex v) {
         ArrayList<String> neighbors = new ArrayList<>();
         for (Edge e : edges) {
-            if(e.a.equals(v)) {
-                neighbors.add(e.b.name);
+            if(e.v1.equals(v)) {
+                neighbors.add(e.v2.name);
             }
         }
 
