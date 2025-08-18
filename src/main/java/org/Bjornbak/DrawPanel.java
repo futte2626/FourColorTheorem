@@ -11,44 +11,73 @@ public class DrawPanel extends JPanel implements MouseListener, ItemListener, Ch
     public Graph graph;
     private Boolean mouseDown;
     private Vertex startVertex;
+    private JLabel[] vertexLabels;
     private double mosPosX, mosPosY;
 
     DrawPanel() {
         this.setPreferredSize(new Dimension(1000, 800));
+        this.setLayout(null);
         graph = new Graph();
         addMouseListener(this);
 
 
-        Vertex v1 = new Vertex("v1", 100, 100, null);
-        Vertex v2 = new Vertex("v2", 200, 50, null);
-        Vertex v3 = new Vertex("v3", 300, 100, null);
-        Vertex v4 = new Vertex("v4", 150, 200, null);
-        Vertex v5 = new Vertex("v5", 250, 200, null);
-        Vertex v6 = new Vertex("v6", 100, 300, null);
-        Vertex v7 = new Vertex("v7", 300, 300, null);
+        Vertex r = new Vertex("r", 60, 60, null);
+        Vertex g = new Vertex("g", 140, 60, null);
+        Vertex b = new Vertex("b", 100, 120, null);
 
-        graph.addVertex(v1);
-        graph.addVertex(v2);
-        graph.addVertex(v3);
-        graph.addVertex(v4);
-        graph.addVertex(v5);
-        graph.addVertex(v6);
-        graph.addVertex(v7);
+// the four neighbors of u (will end up R,G,B,Y)
+        Vertex n1 = new Vertex("n1", 260, 40, null);
+        Vertex n2 = new Vertex("n2", 320, 100, null);
+        Vertex n3 = new Vertex("n3", 260, 160, null);
+        Vertex n4 = new Vertex("n4", 200, 100, null);
 
-// Planar edges
-      /*  graph.addEdge(v1, v2);
-        graph.addEdge(v2, v3);
-        graph.addEdge(v1, v4);
-        graph.addEdge(v2, v4);
-        graph.addEdge(v2, v5); */
-        graph.addEdge(v3, v5);
-        graph.addEdge(v4, v5);
-        graph.addEdge(v4, v6);
-        graph.addEdge(v5, v7);
-        graph.addEdge(v6, v7);
-        graph.printVertices(graph.getNeighbors(v1));
+// center (must be last to force failure)
+        Vertex u  = new Vertex("u", 280, 100, null);
+
+// add in THIS order to preserve iteration order of ColorGraph()
+        graph.addVertex(r);
+        graph.addVertex(g);
+        graph.addVertex(b);
+        graph.addVertex(n1);
+        graph.addVertex(n2);
+        graph.addVertex(n3);
+        graph.addVertex(n4);
+        graph.addVertex(u);
+
+// --- helper triangle to fix their colors: r=RED, g=GREEN, b=BLUE
+        graph.addEdge(g, r);      // g sees RED -> becomes GREEN
+        graph.addEdge(b, r);      // b sees RED & GREEN (after next line) -> becomes BLUE
+        graph.addEdge(b, g);
+
+// --- force n1..n4 to become R,G,B,Y in order
+// n1 has no colored neighbors -> RED
+// n2 adjacent to n1(RED) -> GREEN
+        graph.addEdge(n1, n2);
+
+// n3 adjacent to n2(GREEN) and r(RED) -> BLUE
+        graph.addEdge(n3, n2);
+        graph.addEdge(n3, r);
+
+// n4 adjacent to r(RED), g(GREEN), b(BLUE) -> YELLOW
+        graph.addEdge(n4, r);
+        graph.addEdge(n4, g);
+        graph.addEdge(n4, b);
+
+// --- center sees all four colors -> no color left -> BLACK
+        graph.addEdge(u, n1);
+        graph.addEdge(u, n2);
+        graph.addEdge(u, n3);
+        graph.addEdge(u, n4);
+
+        vertexLabels = new JLabel[graph.vertices.size()];
+        for(int i = 0; i < vertexLabels.length; i++) {
+            vertexLabels[i] = new JLabel(graph.vertices.get(i).name);
+            vertexLabels[i].setBounds(graph.vertices.get(i).x + 15,graph.vertices.get(i).y - 15, 15, 15 );
+            add(vertexLabels[i]);
+        }
+
         JButton colorButton = new JButton("Farv graf");
-        colorButton.setSize(400,400);
+        colorButton.setBounds(0, 0, 100, 20);
         colorButton.setVisible(true);
         this.add(colorButton);
         colorButton.addActionListener(new ActionListener() {
@@ -80,6 +109,7 @@ public class DrawPanel extends JPanel implements MouseListener, ItemListener, Ch
             }
             else g2d.setColor(Color.black);
 
+            vertexLabels[i].setBounds(graph.vertices.get(i).x + 15,graph.vertices.get(i).y - 15, 15, 15 );
             Point2D p = new Point2D.Float(graph.vertices.get(i).x, graph.vertices.get(i).y);
             g2d.fillOval((int)p.getX()-13, (int)p.getY()-13, 26, 26);
         }

@@ -1,0 +1,49 @@
+Here is a graph that should be four colorable but the greedy algoritm fails.
+
+        Vertex r = new Vertex("r", 60, 60, null);
+        Vertex g = new Vertex("g", 140, 60, null);
+        Vertex b = new Vertex("b", 100, 120, null);
+
+// the four neighbors of u (will end up R,G,B,Y)
+        Vertex n1 = new Vertex("n1", 260, 40, null);
+        Vertex n2 = new Vertex("n2", 320, 100, null);
+        Vertex n3 = new Vertex("n3", 260, 160, null);
+        Vertex n4 = new Vertex("n4", 200, 100, null);
+
+// center (must be last to force failure)
+        Vertex u  = new Vertex("u", 280, 100, null);
+
+// add in THIS order to preserve iteration order of ColorGraph()
+        graph.addVertex(r);
+        graph.addVertex(g);
+        graph.addVertex(b);
+        graph.addVertex(n1);
+        graph.addVertex(n2);
+        graph.addVertex(n3);
+        graph.addVertex(n4);
+        graph.addVertex(u);
+
+// --- helper triangle to fix their colors: r=RED, g=GREEN, b=BLUE
+        graph.addEdge(g, r);      // g sees RED -> becomes GREEN
+        graph.addEdge(b, r);      // b sees RED & GREEN (after next line) -> becomes BLUE
+        graph.addEdge(b, g);
+
+// --- force n1..n4 to become R,G,B,Y in order
+// n1 has no colored neighbors -> RED
+// n2 adjacent to n1(RED) -> GREEN
+        graph.addEdge(n1, n2);
+
+// n3 adjacent to n2(GREEN) and r(RED) -> BLUE
+        graph.addEdge(n3, n2);
+        graph.addEdge(n3, r);
+
+// n4 adjacent to r(RED), g(GREEN), b(BLUE) -> YELLOW
+        graph.addEdge(n4, r);
+        graph.addEdge(n4, g);
+        graph.addEdge(n4, b);
+
+// --- center sees all four colors -> no color left -> BLACK
+        graph.addEdge(u, n1);
+        graph.addEdge(u, n2);
+        graph.addEdge(u, n3);
+        graph.addEdge(u, n4);
