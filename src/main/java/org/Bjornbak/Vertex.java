@@ -1,7 +1,6 @@
 package org.Bjornbak;
 
-import java.awt.*;
-import java.util.ArrayList;
+import java.awt.Color;
 import java.util.Objects;
 
 public class Vertex {
@@ -18,6 +17,7 @@ public class Vertex {
 
     @Override
     public boolean equals(Object obj) {
+        if(obj==null) return false;
         if (this == obj) return true;
         if (!(obj instanceof Vertex)) return false;
         Vertex other = (Vertex) obj;

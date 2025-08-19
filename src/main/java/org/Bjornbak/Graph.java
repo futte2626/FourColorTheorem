@@ -87,6 +87,19 @@ public final class Graph {
         return neighbors;
     }
 
+    public ArrayList<Edge> getEdges(Vertex v) {
+        ArrayList<Edge> vertexEdges = new ArrayList<>();
+        for (Edge e : edges) {
+            if(e.v1.equals(v)) {
+                vertexEdges.add(e);
+            }
+            else if(e.v2.equals(v)) {
+                vertexEdges.add(e);
+            }
+        }
+        return vertexEdges;
+    }
+
     public ArrayList<String> getNeighborName(Vertex v) {
         ArrayList<String> neighbors = new ArrayList<>();
         for (Edge e : edges) {
@@ -121,28 +134,15 @@ public final class Graph {
         System.out.println("Time to color graph: " + ((System.nanoTime() - startTime) / 1000000) + " ms");
     }
 
-    /*public void ColorGraph() {
-        ArrayList<Color> possibleColors = colors;
-        for (int i = 0; i < this.vertices.size(); i++) {
-            for(Vertex v : getNeighbors(vertices.get(i))) {
-                if(v.c != null) possibleColors.remove(v.c);
-            }
-            if(!possibleColors.isEmpty()) {vertices.get(i).c = possibleColors.get(0);}
-            else vertices.get(i).c = Color.BLACK;
-
-            possibleColors = colors;
+    public void ResetGraph() {
+        for (Edge e : edges) {
+            e.CalculateIntermediatePoints();
         }
-    } */
+    }
 
-    /* public void ColorGraph(int maxColor) {
-        int highestDegree = 0;
-        int higestDegreePos = 0;
-        for (int i = 0; i < this.vertices.size(); i++) {
-            if(getVertexDegree(this.vertices.get(i)) > highestDegree) {
-                highestDegree = getVertexDegree(this.vertices.get(i));
-                higestDegreePos = i;
-            }
+    public void ResetEdges(ArrayList<Edge> edges) {
+        for (Edge e : edges) {
+            e.CalculateIntermediatePoints();
         }
-        this.vertices.get(higestDegreePos).c = Color.BLUE;
-    } */
+    }
 }

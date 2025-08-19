@@ -10,6 +10,7 @@ import java.awt.geom.Point2D;
 public class DrawPanel extends JPanel implements MouseListener, ItemListener, ChangeListener {
     public Graph graph;
     private Boolean mouseDown;
+    private Boolean drawIntermediatePoints = true;
     private Vertex startVertex;
     private JLabel[] vertexLabels;
     private double mosPosX, mosPosY;
@@ -86,6 +87,23 @@ public class DrawPanel extends JPanel implements MouseListener, ItemListener, Ch
                 repaint();
             }
         });
+
+        JToggleButton drawIntermediatePointsButton = new JToggleButton("Tegn kant punkter");
+        drawIntermediatePointsButton.setBounds(100, 0, 150, 20);
+        drawIntermediatePointsButton.setVisible(true);
+        drawIntermediatePointsButton.setSelected(true);
+        this.add(drawIntermediatePointsButton);
+        ItemListener itemListener = new ItemListener() {
+            public void itemStateChanged(ItemEvent itemEvent) {
+                int state = itemEvent.getStateChange();
+                if (state == ItemEvent.SELECTED) drawIntermediatePoints = true;
+                else drawIntermediatePoints = false;
+                repaint();
+            }
+        };
+
+        drawIntermediatePointsButton.addItemListener(itemListener);
+
     }
 
     public void paintComponent(Graphics g) {
@@ -99,7 +117,6 @@ public class DrawPanel extends JPanel implements MouseListener, ItemListener, Ch
             g2d.setColor(Color.black);
             Edge currentEdge = graph.edges.get(i);
 
-            //currentEdge.CalculateIntermediatePoints();
             Point2D p1 = new Point2D.Float(currentEdge.v1.x, currentEdge.v1.y);
             Point2D p2 = new Point2D.Float(currentEdge.v2.x, currentEdge.v2.y);
             Point2D intermediatePoint1 = new Point2D.Double(currentEdge.intermediatePoints[0].getX(),currentEdge.intermediatePoints[0].getY());
@@ -112,8 +129,10 @@ public class DrawPanel extends JPanel implements MouseListener, ItemListener, Ch
                 g2d.drawLine((int)currentPoint.getX(),(int)currentPoint.getY(),(int)prevPoint.getX(),(int)prevPoint.getY());
                 prevPoint = currentPoint;
             }
-            g2d.fillOval((int)intermediatePoint1.getX()-4,(int)intermediatePoint1.getY()-4,8,8);
-            g2d.fillOval((int)intermediatePoint2.getX()-4,(int)intermediatePoint2.getY()-4,8,8);
+            if(drawIntermediatePoints) {
+                g2d.fillOval((int)intermediatePoint1.getX()-3,(int)intermediatePoint1.getY()-3,6,6);
+                g2d.fillOval((int)intermediatePoint2.getX()-3,(int)intermediatePoint2.getY()-3,6,6);
+            }
         }
 
         //Draw verticies
@@ -242,6 +261,8 @@ public class DrawPanel extends JPanel implements MouseListener, ItemListener, Ch
                         try {
                             v.x = getMousePosition().x;
                             v.y = getMousePosition().y;
+                            graph.ResetEdges(graph.getEdges(v));
+                            System.out.println(graph.getEdges(v));
                         }catch (Exception ignored) {
 
                         }
