@@ -262,7 +262,6 @@ public class DrawPanel extends JPanel implements MouseListener, ItemListener, Ch
                             v.x = getMousePosition().x;
                             v.y = getMousePosition().y;
                             graph.ResetEdges(graph.getEdges(v));
-                            System.out.println(graph.getEdges(v));
                         }catch (Exception ignored) {
 
                         }
