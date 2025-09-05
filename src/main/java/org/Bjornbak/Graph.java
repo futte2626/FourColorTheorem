@@ -145,4 +145,10 @@ public final class Graph {
             e.CalculateIntermediatePoints();
         }
     }
+
+    public void ResetColors() {
+        for(Vertex v : vertices) {
+            v.c = null;
+        }
+    }
 }

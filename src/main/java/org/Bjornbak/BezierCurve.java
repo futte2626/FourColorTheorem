@@ -5,7 +5,7 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 public class BezierCurve {
-    public Point2D[] controlPoints = new Point2D[4];
+    public Point2D[] controlPoints = new Point2D[5];
 
     public BezierCurve(Point2D[] controlPoints) {
         this.controlPoints = controlPoints;
